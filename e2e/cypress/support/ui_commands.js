@@ -1,7 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import timeouts from '../utils/timeouts';
+import timeouts from '../utils/timeouts';//This was already here
+import * as TIMEOUTS from '../fixtures/timeouts';
 
 function waitUntilPermanentPost() {
     cy.get('#postListContent').should('be.visible');
@@ -25,4 +26,25 @@ function postMessageAndWait(textboxSelector, message) {
 
 Cypress.Commands.add('postMessage', (message) => {
     postMessageAndWait('#post_textbox', message);
+});
+
+/**
+ * @see `cy.uiWaitUntilMessagePostedIncludes` at ./ui_commands.d.ts
+ */
+Cypress.Commands.add('uiWaitUntilMessagePostedIncludes', (message) => {
+    const checkFn = () => {
+        return cy.getLastPost().then((el) => {
+            const postedMessageEl = el.find('.post-message__text')[0];
+            return Boolean(postedMessageEl && postedMessageEl.textContent.includes(message));
+        });
+    };
+
+    // Wait for 5 seconds with 500ms check interval
+    const options = {
+        timeout: TIMEOUTS.FIVE_SEC,
+        interval: TIMEOUTS.HALF_SEC,
+        errorMsg: `Expected "${message}" to be in the last message posted but not found.`,
+    };
+
+    return cy.waitUntil(checkFn, options);
 });

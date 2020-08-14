@@ -76,9 +76,6 @@ describe('Test AutoLink', function () {
                     'Template [MM-${{}jira_id{}}](https://mattermost.atlassian.net/browse/MM-${{}jira_id{}}){enter}',
             );
         cy.contains('Template: ');
-        cy.contains('Template:')
-            .siblings()
-            .then((el) => console.log(el));
         cy.waitUntil(() => {
             return cy.getLastPost().then((el) => {
                 return el.find('code');
@@ -124,7 +121,10 @@ describe('Test AutoLink', function () {
 
         cy.get(`#${team1.name}TeamButton`).click();
         cy.wait(500);
-        cy.postMessage('MM-1234{enter}');
+
+        cy.get('#post_textbox').type('MM-1234');
+        cy.wait(1000);
+        cy.get('#post_textbox').type('{enter}');
         cy.getLastPost().within(() => {
             cy.get('.theme.markdown__link')
                 .should('have.attr', 'href', 'https://mattermost.atlassian.net/browse/MM-1234')
@@ -208,8 +208,8 @@ describe('Test AutoLink', function () {
             },
         });
 
-        cy.visit('/');
-
+        cy.visit(`/${team1.name}/channels/town-square`);
+        
         //Ensure pattern is applied on edit
 
         cy.get('#post_textbox').clear();
@@ -230,12 +230,14 @@ describe('Test AutoLink', function () {
         cy.visit(`/${team1.name}/channels/town-square`);
         // Ensure autolink commands are non functinal
         cy.postMessage('/autolink list {enter}');
+        cy.uiWaitUntilMessagePostedIncludes(` commands can only be executed by a system administrator or `);
         cy.getLastPost().within(() => {
             cy.contains(` commands can only be executed by a system administrator or `);
         });
         cy.postMessage('/autolink add pickles{enter}');
-        cy.wait(250);
-        cy.getLastPost().within(() => {
+        cy.wait(1000);
+        cy.uiWaitUntilMessagePostedIncludes(` commands can only be executed by a system administrator or `);
+                cy.getLastPost().within(() => {
             cy.contains(` commands can only be executed by a system administrator or `);
         });
     });
@@ -318,15 +320,8 @@ describe('Test AutoLink', function () {
             cy.get('.theme.markdown__link')
                 .eq(1)
                 .should('have.attr', 'href', 'https://github.com/mattermost/mattermost-webapp/pull/2858')
-                .and('have.text', 'pr-mattermost-webapp-2858'); // Should this behave as a contains rather than equal or statys with
+                .and('have.text', 'pr-mattermost-webapp-2858'); 
         });
     });
+
 });
-
-// Dylan list
-// 0. Finish User added as plugin admin
-// 1. Clean up commented out code and maybe some waits
-// 2. Add few tests where autolink makes multiple changes in a post
-
-// 3. Submit PR
-//     -- Git Ignore

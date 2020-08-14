@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://localhost:8065",
+    "baseUrl": "https://dkh-cypress-01.test.mattermost.cloud",
     "viewportWidth": 1300,
     "defaultCommandTimeout": 20000,
     "taskTimeout": 20000,
@@ -9,6 +9,6 @@
     "testFiles": "**/*_spec.js",
     "env": {
         "adminUsername": "sysadmin",
-        "adminPassword": "Sys@dmin-sample1"
+        "adminPassword": "Sys@dmin123"
     }
 }
