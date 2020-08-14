@@ -121,7 +121,6 @@ describe('Test AutoLink', function () {
 
         cy.get(`#${team1.name}TeamButton`).click();
         cy.wait(500);
-
         cy.get('#post_textbox').type('MM-1234');
         cy.wait(1000);
         cy.get('#post_textbox').type('{enter}');
